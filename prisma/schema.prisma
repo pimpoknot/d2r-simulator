@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  magicFind Int      @default(0) @map("magic_find")
+  playersX  Int      @default(1) @map("players_x")
+  lastLogin DateTime @default(now()) @map("last_login")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  runConfigs UserRunConfig[]
+  stashItems StashItem[]
+  holyGrail  HolyGrail[]
+
+  @@map("users")
+}
+
+model Location {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  targetMonster   String   @map("target_monster")
+  treasureClassId String   @map("treasure_class_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  runConfigs UserRunConfig[]
+
+  @@map("locations")
+}
+
+model UserRunConfig {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  locationId       String   @map("location_id")
+  avgRunTimeMs     Int      @map("avg_run_time_ms")
+  lastRunTimestamp DateTime @default(now()) @map("last_run_timestamp")
+  isActive         Boolean  @default(false) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([locationId])
+  @@map("user_run_configs")
+}
+
+model StashItem {
+  id           String      @id @default(cuid())
+  userId       String      @map("user_id")
+  itemName     String      @map("item_name")
+  itemQuality  ItemQuality @default(NORMAL) @map("item_quality")
+  statsPayload Json        @map("stats_payload")
+  droppedAt    DateTime    @default(now()) @map("dropped_at")
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([itemQuality])
+  @@map("stash_items")
+}
+
+enum ItemQuality {
+  NORMAL
+  MAGIC
+  RARE
+  SET
+  UNIQUE
+  RUNE
+  CRAFTED
+}
+
+model HolyGrail {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  uniqueItemId String   @map("unique_item_id")
+  discoveredAt DateTime @default(now()) @map("discovered_at")
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, uniqueItemId])
+  @@index([userId])
+  @@map("holy_grail")
+}
+
+model Rune {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  tier      Int      @unique
+  imageUrl  String?  @map("image_url")
+  imagePath String?  @map("image_path")
+  weapon    String?  @db.Text
+  helmet    String?  @db.Text
+  armor     String?  @db.Text
+  shield    String?  @db.Text
+  sourceUrl String   @map("source_url")
+  scrapedAt DateTime @map("scraped_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("runes")
+}
+
+model UniqueItem {
+  id        String   @id @default(cuid())
+  /// URL-safe identifier from the Maxroll page, e.g. "andariel-s-visage"
+  slug      String   @unique
+  name      String
+  /// The base item type (e.g. "Demonhead"), null when not shown
+  baseType  String?  @map("base_type") @db.Text
+  pageUrl   String   @map("page_url")
+  imageUrl  String?  @map("image_url")
+  sourceUrl String   @map("source_url")
+  scrapedAt DateTime @map("scraped_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@map("unique_items")
+}
