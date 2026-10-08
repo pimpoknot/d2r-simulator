@@ -12,7 +12,14 @@ function createClient() {
     throw new Error("DATABASE_URL is not set");
   }
 
-  const adapter = new PrismaPg({ connectionString }, { schema: "public" });
+  const adapter = new PrismaPg(
+    {
+      connectionString,
+      // Fail fast instead of hanging the render when the host is unreachable.
+      connectionTimeoutMillis: 5_000,
+    },
+    { schema: "public" },
+  );
 
   return new PrismaClient({
     adapter,
