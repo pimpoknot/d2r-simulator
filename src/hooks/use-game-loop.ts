@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface UseGameLoopProps {
   runTimeMs: number;
@@ -9,55 +9,68 @@ interface UseGameLoopProps {
 export function useGameLoop({ runTimeMs, onRunComplete, isActive }: UseGameLoopProps) {
   const [timeLeftMs, setTimeLeftMs] = useState(runTimeMs);
   const [progress, setProgress] = useState(0);
+
+  const onRunCompleteRef = useRef(onRunComplete);
+  const runTimeMsRef = useRef(runTimeMs);
   const startTimeRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
 
-  const loop = useCallback(
-    (timestamp: number) => {
+  useEffect(() => {
+    onRunCompleteRef.current = onRunComplete;
+  }, [onRunComplete]);
+
+  useEffect(() => {
+    runTimeMsRef.current = runTimeMs;
+  }, [runTimeMs]);
+
+  useEffect(() => {
+    if (!isActive) {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      startTimeRef.current = null;
+      return;
+    }
+
+    const step = (timestamp: number) => {
       if (!startTimeRef.current) {
         startTimeRef.current = timestamp;
       }
 
+      const totalMs = runTimeMsRef.current;
       const elapsed = timestamp - startTimeRef.current;
-      const remaining = Math.max(0, runTimeMs - elapsed);
+      const remaining = Math.max(0, totalMs - elapsed);
 
       setTimeLeftMs(remaining);
-      setProgress(Math.min(100, (elapsed / runTimeMs) * 100));
+      setProgress(totalMs > 0 ? Math.min(100, (elapsed / totalMs) * 100) : 100);
 
       if (remaining > 0) {
-        rafRef.current = requestAnimationFrame(loop);
+        rafRef.current = requestAnimationFrame(step);
       } else {
-        // Run is complete
-        onRunComplete();
-        // Reset for the next run if it stays active
+        onRunCompleteRef.current();
         startTimeRef.current = null;
-        if (isActive) {
-          rafRef.current = requestAnimationFrame(loop);
-        }
+        rafRef.current = requestAnimationFrame(step);
       }
-    },
-    [runTimeMs, onRunComplete, isActive]
-  );
+    };
 
-  useEffect(() => {
-    if (isActive) {
-      startTimeRef.current = null; // Reset start time when activated
-      rafRef.current = requestAnimationFrame(loop);
-    } else {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      setTimeLeftMs(runTimeMs);
-      setProgress(0);
-      startTimeRef.current = null;
-    }
+    startTimeRef.current = null;
+    rafRef.current = requestAnimationFrame(step);
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, [isActive, loop, runTimeMs]);
+  }, [isActive]);
+
+  const displayTime = isActive ? timeLeftMs : runTimeMs;
+  const displayProgress = isActive ? progress : 0;
 
   return {
-    timeLeftMs,
-    progress,
-    timeLeftSeconds: (timeLeftMs / 1000).toFixed(1),
+    timeLeftMs: displayTime,
+    progress: displayProgress,
+    timeLeftSeconds: (displayTime / 1000).toFixed(1),
   };
 }

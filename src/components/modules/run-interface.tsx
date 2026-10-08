@@ -137,7 +137,7 @@ export function RunInterface({ farm }: RunInterfaceProps) {
           </div>
         ) : (
           <ul className="flex flex-col gap-2 overflow-y-auto max-h-[600px] pr-2">
-            {drops.map((drop, index) => (
+            {drops.map((drop) => (
               <li 
                 key={drop.id} 
                 className={`p-3 rounded border border-zinc-800/50 bg-zinc-900/30 flex items-center justify-between animate-in fade-in slide-in-from-top-2`}

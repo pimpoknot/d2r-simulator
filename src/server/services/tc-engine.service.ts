@@ -1,6 +1,6 @@
 import "server-only";
 import { getTreasureClass, getBaseItem } from "@/constants/d2-tables";
-import type { DropToken, TreasureClassView } from "@/constants/d2-tables/types";
+import type { DropToken } from "@/constants/d2-tables/types";
 
 export interface GeneratedDrop {
   itemType: string;
@@ -118,9 +118,7 @@ export function resolveTreasureClass(
       // (D2 handles this by dropping up to 1 of each until picks runs out, but we simplify to regular sequential roll)
       const entry = tc.entries[i];
       if (entry) {
-        // Roll probability for this specific entry
-        const roll = Math.random() * 100; // usually probability in negative picks is percentage or base
-        // Simplify: we just drop it directly for the simulation
+        // Simplify: drop resolved token directly for the simulation
         const resolved = resolveToken(entry.target, playersX, magicFind, depth + 1);
         drops.push(...resolved);
       }
