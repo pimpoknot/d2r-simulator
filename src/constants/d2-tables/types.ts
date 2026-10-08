@@ -20,6 +20,13 @@ export interface ItemTypeRecord {
   generatesTreasureClass: boolean;
 }
 
+export interface ItemRawProp {
+  prop: string;
+  min?: number;
+  max?: number;
+  par?: number;
+}
+
 export interface UniqueItemDrop {
   name: string;
   baseCode: string;
@@ -28,6 +35,7 @@ export interface UniqueItemDrop {
   level: number;
   levelRequirement: number;
   spawnable: boolean;
+  rawProps: ItemRawProp[];
 }
 
 export interface SetItemDrop {

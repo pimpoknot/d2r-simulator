@@ -13,6 +13,7 @@ import type {
   TreasureClassEntry,
   TreasureClassView,
   UniqueItemDrop,
+  ItemRawProp,
 } from "./types";
 
 const requireJson = createRequire(import.meta.url);
@@ -128,6 +129,22 @@ function loadUniqueItems(): { byBase: Map<string, UniqueItemDrop[]>; byName: Map
     const name = readString(row, "index");
     const baseCode = readString(row, "code");
     if (!name || !baseCode) continue;
+
+    const rawProps: ItemRawProp[] = [];
+    for (let i = 1; i <= 12; i++) {
+      const prop = readString(row, `prop${i}`);
+      if (prop) {
+        const min = readNumber(row, `min${i}`);
+        const max = readNumber(row, `max${i}`);
+        const par = readNumber(row, `par${i}`);
+        const rawProp: ItemRawProp = { prop };
+        if (min !== null) rawProp.min = min;
+        if (max !== null) rawProp.max = max;
+        if (par !== null) rawProp.par = par;
+        rawProps.push(rawProp);
+      }
+    }
+
     const item: UniqueItemDrop = {
       name,
       baseCode,
@@ -136,6 +153,7 @@ function loadUniqueItems(): { byBase: Map<string, UniqueItemDrop[]>; byName: Map
       level: readNumber(row, "lvl") ?? 0,
       levelRequirement: readNumber(row, "lvl req") ?? 0,
       spawnable: readNumber(row, "spawnable") !== 0,
+      rawProps,
     };
     const bucket = byBase.get(baseCode) ?? [];
     bucket.push(item);
@@ -340,6 +358,10 @@ export function getItemType(code: string): ItemTypeRecord | null {
 
 export function getUniqueItemsForBase(code: string): UniqueItemDrop[] {
   return getTables().uniquesByBase.get(code) ?? [];
+}
+
+export function getUniqueItemByName(name: string): UniqueItemDrop | null {
+  return getTables().uniquesByName.get(name) ?? null;
 }
 
 export function getSetItemsForBase(code: string): SetItemDrop[] {

@@ -26,30 +26,35 @@ async function main() {
   const scrapedAt = new Date();
 
   try {
-    await db.$transaction(
-      items.map((item) =>
-        db.uniqueItem.upsert({
-          where: { slug: item.slug },
-          create: {
-            slug: item.slug,
-            name: item.name,
-            baseType: item.baseType,
-            pageUrl: item.pageUrl,
-            imageUrl: item.imageUrl,
-            sourceUrl: UNIQUES_PAGE_URL,
-            scrapedAt,
-          },
-          update: {
-            name: item.name,
-            baseType: item.baseType,
-            pageUrl: item.pageUrl,
-            imageUrl: item.imageUrl,
-            sourceUrl: UNIQUES_PAGE_URL,
-            scrapedAt,
-          },
-        }),
-      ),
-    );
+    const CHUNK_SIZE = 50;
+    for (let i = 0; i < items.length; i += CHUNK_SIZE) {
+      const chunk = items.slice(i, i + CHUNK_SIZE);
+      await db.$transaction(
+        chunk.map((item) =>
+          db.uniqueItem.upsert({
+            where: { slug: item.slug },
+            create: {
+              slug: item.slug,
+              name: item.name,
+              baseType: item.baseType,
+              pageUrl: item.pageUrl,
+              imageUrl: item.imageUrl,
+              sourceUrl: UNIQUES_PAGE_URL,
+              scrapedAt,
+            },
+            update: {
+              name: item.name,
+              baseType: item.baseType,
+              pageUrl: item.pageUrl,
+              imageUrl: item.imageUrl,
+              sourceUrl: UNIQUES_PAGE_URL,
+              scrapedAt,
+            },
+          }),
+        ),
+        { timeout: 30000 }
+      );
+    }
 
     const stored = await db.uniqueItem.findMany({
       orderBy: { imageUrl: "asc" },
