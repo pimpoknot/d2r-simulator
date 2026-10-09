@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "assets-ng.maxroll.gg",
       },
+      {
+        protocol: "https",
+        hostname: "assets.maxroll.gg",
+      },
     ],
   },
 };

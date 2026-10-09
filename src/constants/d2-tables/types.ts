@@ -8,6 +8,15 @@ export interface BaseItem {
   level: number;
   rarity: number;
   spawnable: boolean;
+  minac?: number;
+  maxac?: number;
+  mindam?: number;
+  maxdam?: number;
+  twohandmindam?: number;
+  twohandmaxdam?: number;
+  invfile?: string;
+  uniqueinvfile?: string;
+  setinvfile?: string;
 }
 
 export interface ItemTypeRecord {
@@ -47,6 +56,7 @@ export interface SetItemDrop {
   level: number;
   levelRequirement: number;
   spawnable: boolean;
+  rawProps: ItemRawProp[];
 }
 
 export interface ItemRatioRecord {

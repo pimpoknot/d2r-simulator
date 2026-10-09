@@ -17,6 +17,7 @@ interface DroppedItem {
   quality: string;
   baseCode?: string;
   imageUrl?: string | null;
+  tooltipLines?: { text: string; color: string; gapBefore?: boolean }[];
 }
 
 export function RunInterface({ farm }: RunInterfaceProps) {
@@ -63,6 +64,7 @@ export function RunInterface({ farm }: RunInterfaceProps) {
             quality: string;
             baseCode?: string;
             imageUrl?: string | null;
+            tooltipLines?: { text: string; color: string; gapBefore?: boolean }[];
           }>;
         };
       };
@@ -75,6 +77,7 @@ export function RunInterface({ farm }: RunInterfaceProps) {
           quality: d.quality,
           baseCode: d.baseCode,
           imageUrl: d.imageUrl,
+          tooltipLines: d.tooltipLines,
         }));
 
         setDrops((prev) => [...newDrops, ...prev].slice(0, 100));
@@ -209,11 +212,9 @@ export function RunInterface({ farm }: RunInterfaceProps) {
                 item={{
                   name: drop.name,
                   quality: drop.quality.toLowerCase() as ItemQuality,
-                  lines: [
+                  lines: drop.tooltipLines?.length ? drop.tooltipLines : [
                     {
-                      text: drop.quality === "RUNE" 
-                        ? "Pode ser inserida em engastes." 
-                        : `Base: ${drop.baseCode || "Desconhecida"}`,
+                      text: `Base: ${drop.baseCode || "Desconhecida"}`,
                       color: "#6969ff"
                     },
                     { text: "Atributos reais ainda não carregados.", color: "#888888", gapBefore: true }

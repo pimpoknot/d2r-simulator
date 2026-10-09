@@ -206,9 +206,11 @@ function resolveToken(
       }];
 
     case "gold":
+      const maxQuantity = token.multiplier ? token.multiplier * monsterLevel : 100;
+      const quantity = Math.max(1, Math.floor(Math.random() * maxQuantity));
       return [{
         itemType: "gold",
-        name: "Ouro",
+        name: `Ouro (${quantity})`,
         quality: "NORMAL",
       }];
 

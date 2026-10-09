@@ -92,7 +92,7 @@ function loadBaseItems(
     const code = readString(row, "code");
     const name = readString(row, "name");
     if (!code || !name) continue;
-    into.set(code, {
+    const item: BaseItem = {
       table,
       name,
       code,
@@ -100,7 +100,22 @@ function loadBaseItems(
       level: readNumber(row, "level") ?? 0,
       rarity: readNumber(row, "rarity") ?? 0,
       spawnable: readNumber(row, "spawnable") !== 0,
-    });
+      invfile: readString(row, "invfile") ?? undefined,
+      uniqueinvfile: readString(row, "uniqueinvfile") ?? undefined,
+      setinvfile: readString(row, "setinvfile") ?? undefined,
+    };
+    
+    if (table === "armor") {
+      item.minac = readNumber(row, "minac") ?? undefined;
+      item.maxac = readNumber(row, "maxac") ?? undefined;
+    } else if (table === "weapons") {
+      item.mindam = readNumber(row, "mindam") ?? undefined;
+      item.maxdam = readNumber(row, "maxdam") ?? undefined;
+      item.twohandmindam = readNumber(row, "2handmindam") ?? undefined;
+      item.twohandmaxdam = readNumber(row, "2handmaxdam") ?? undefined;
+    }
+
+    into.set(code, item);
   }
 }
 
@@ -169,6 +184,22 @@ function loadSetItems(): Map<string, SetItemDrop[]> {
     const name = readString(row, "index");
     const baseCode = readString(row, "item");
     if (!name || !baseCode) continue;
+
+    const rawProps: ItemRawProp[] = [];
+    for (let i = 1; i <= 12; i++) {
+      const prop = readString(row, `prop${i}`);
+      if (prop) {
+        const min = readNumber(row, `min${i}`);
+        const max = readNumber(row, `max${i}`);
+        const par = readNumber(row, `par${i}`);
+        const rawProp: ItemRawProp = { prop };
+        if (min !== null) rawProp.min = min;
+        if (max !== null) rawProp.max = max;
+        if (par !== null) rawProp.par = par;
+        rawProps.push(rawProp);
+      }
+    }
+
     const item: SetItemDrop = {
       name,
       setName: readString(row, "set"),
@@ -178,6 +209,7 @@ function loadSetItems(): Map<string, SetItemDrop[]> {
       level: readNumber(row, "lvl") ?? 0,
       levelRequirement: readNumber(row, "lvl req") ?? 0,
       spawnable: readNumber(row, "spawnable") !== 0,
+      rawProps,
     };
     const bucket = byBase.get(baseCode) ?? [];
     bucket.push(item);
@@ -366,6 +398,14 @@ export function getUniqueItemByName(name: string): UniqueItemDrop | null {
 
 export function getSetItemsForBase(code: string): SetItemDrop[] {
   return getTables().setsByBase.get(code) ?? [];
+}
+
+export function getSetItemByName(name: string): SetItemDrop | null {
+  for (const items of getTables().setsByBase.values()) {
+    const found = items.find(i => i.name === name);
+    if (found) return found;
+  }
+  return null;
 }
 
 export function getSuperUnique(name: string): SuperUniqueDrop | null {
