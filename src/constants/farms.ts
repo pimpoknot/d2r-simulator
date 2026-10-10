@@ -16,6 +16,14 @@ export interface FarmPreset {
 /** Hell farms whose treasure class is already in the vendored D2R tables. */
 export const FARM_PRESETS: readonly FarmPreset[] = [
   {
+    slug: "countess",
+    name: "The Countess",
+    area: "A Torre Esquecida",
+    difficulty: "Hell",
+    note: "Famosa por dropar runas extras",
+    kills: [{ monster: "The Countess", treasureClass: "Countess (H)", count: 1 }],
+  },
+  {
     slug: "andariel",
     name: "Andariel",
     area: "Catacumbas",

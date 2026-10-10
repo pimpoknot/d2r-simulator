@@ -4,7 +4,7 @@ import Link from "next/link";
 function picksLabel(picks: number) {
   if (picks < 0) {
     const count = Math.abs(picks);
-    return `${count} ${count === 1 ? "item" : "itens"}, sem repetir a mesma entrada`;
+    return `${count} ${count === 1 ? "item" : "items"}, without repeating the same entry`;
   }
 
   return `${picks} ${picks === 1 ? "pick" : "picks"}`;
@@ -14,7 +14,7 @@ function TreasureClassBlock({ treasureClass }: { treasureClass: FarmTreasureClas
   if (treasureClass.missing) {
     return (
       <p role="alert" className="text-sm text-red-200">
-        Treasure Class {treasureClass.name} não está nas tabelas.
+        Treasure Class {treasureClass.name} is not in the tables.
       </p>
     );
   }
@@ -46,7 +46,7 @@ export function FarmBoard({ farms }: { farms: FarmCard[] }) {
   return (
     <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {farms.map((farm) => {
-        const killLabel = farm.killCount === 1 ? "1 morte" : `${farm.killCount} mortes`;
+        const killLabel = farm.killCount === 1 ? "1 kill" : `${farm.killCount} kills`;
 
         return (
           <li key={farm.slug}>

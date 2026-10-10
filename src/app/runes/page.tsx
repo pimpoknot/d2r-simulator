@@ -5,9 +5,9 @@ import { RuneTable } from "@/components/modules/rune-table";
 import { listRunes } from "@/server/repositories/rune.repo";
 
 export const metadata: Metadata = {
-  title: "Runas",
+  title: "Runes",
   description:
-    "Lista das runas de Diablo II com os bônus em arma, elmo, armadura e escudo.",
+    "List of Diablo II runes with bonuses in weapons, helms, armor, and shields.",
 };
 
 export default async function RunesPage() {
@@ -36,7 +36,7 @@ export default async function RunesPage() {
               Diablo II
             </p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-              Lista de runas
+              Rune List
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
               Bônus de cada runa encaixada em arma, elmo, armadura ou escudo.
@@ -57,7 +57,7 @@ export default async function RunesPage() {
         ) : (
           <>
             <p className="text-sm text-zinc-500">
-              {runes.length} {runes.length === 1 ? "runa" : "runas"}
+              {runes.length} {runes.length === 1 ? "rune" : "runes"}
             </p>
             <RuneTable runes={runes} />
           </>

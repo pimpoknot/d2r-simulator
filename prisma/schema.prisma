@@ -137,3 +137,19 @@ model UniqueItem {
   @@index([name])
   @@map("unique_items")
 }
+
+model SetItem {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  baseType  String?  @map("base_type") @db.Text
+  pageUrl   String   @map("page_url")
+  imageUrl  String?  @map("image_url")
+  sourceUrl String   @map("source_url")
+  scrapedAt DateTime @map("scraped_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@map("set_items")
+}

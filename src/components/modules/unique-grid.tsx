@@ -13,27 +13,35 @@ interface UniqueItemView {
 }
 
 interface UniqueGridProps {
-  uniques: UniqueItemView[];
+  items: UniqueItemView[];
+  quality?: "unique" | "set";
+  emptyMessage?: string;
+  emptyCommand?: string;
 }
 
-export function UniqueGrid({ uniques }: UniqueGridProps) {
-  if (uniques.length === 0) {
+export function UniqueGrid({ items, quality = "unique", emptyMessage, emptyCommand }: UniqueGridProps) {
+  if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 border border-dashed border-zinc-800 rounded-lg">
-        <p className="text-zinc-500 mb-2">Nenhum item Único encontrado.</p>
-        <p className="text-xs text-zinc-600">Rode o comando <code className="text-amber-500 font-mono">npm run db:scrape:uniques</code></p>
+        <p className="text-zinc-500 mb-2">{emptyMessage || "No item found."}</p>
+        {emptyCommand && (
+          <p className="text-xs text-zinc-600">Run the command <code className="text-amber-500 font-mono">{emptyCommand}</code></p>
+        )}
       </div>
     );
   }
 
+  const colorClass = quality === "set" ? "text-green-500 group-hover:text-green-400" : "text-amber-500 group-hover:text-amber-400";
+  const borderColorClass = quality === "set" ? "group-hover:border-green-900/50" : "group-hover:border-amber-900/50";
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {uniques.map((item) => (
+      {items.map((item) => (
         <ItemTooltip
           key={item.id}
           item={{
             name: item.name,
-            quality: "unique",
+            quality: quality,
             lines: item.tooltipLines,
           }}
         >
@@ -43,7 +51,7 @@ export function UniqueGrid({ uniques }: UniqueGridProps) {
             rel="noopener noreferrer"
             className="flex items-center gap-4 p-3 rounded-lg border border-zinc-800/50 bg-[#141416] hover:bg-zinc-900/80 transition-colors cursor-help group"
           >
-            <div className="relative w-12 h-12 flex-shrink-0 bg-zinc-950/50 rounded flex items-center justify-center overflow-hidden border border-zinc-800 group-hover:border-amber-900/50 transition-colors">
+            <div className={`relative w-12 h-12 flex-shrink-0 bg-zinc-950/50 rounded flex items-center justify-center overflow-hidden border border-zinc-800 transition-colors ${borderColorClass}`}>
               {item.imageUrl ? (
                 <Image
                   src={item.imageUrl}
@@ -57,7 +65,7 @@ export function UniqueGrid({ uniques }: UniqueGridProps) {
               )}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-amber-500 truncate group-hover:text-amber-400 transition-colors">
+              <span className={`text-sm font-medium truncate transition-colors ${colorClass}`}>
                 {item.name}
               </span>
               {item.baseType && (

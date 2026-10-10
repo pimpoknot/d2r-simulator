@@ -7,8 +7,8 @@ import { getUniqueItemByName } from "@/constants/d2-tables/load";
 import { translateStats } from "@/constants/d2-tables/stats-translator";
 
 export const metadata: Metadata = {
-  title: "Itens Únicos",
-  description: "Lista completa de itens Únicos do Diablo II com imagens.",
+  title: "Unique Items",
+  description: "Complete list of Diablo II Unique items with images.",
 };
 
 export default async function UniquesPage() {
@@ -30,11 +30,11 @@ export default async function UniquesPage() {
             href="/"
             className="w-fit text-sm text-zinc-400 underline-offset-4 hover:text-zinc-100 hover:underline"
           >
-            &larr; Voltar ao Início
+            &larr; Back to Home
           </Link>
           <div>
             <p className="text-xs font-medium tracking-[0.18em] text-amber-500 uppercase">
-              O Santo Graal
+              The Holy Grail
             </p>
             <h1 className="font-[family-name:var(--font-diablo)] mt-2 text-3xl tracking-wider uppercase text-zinc-50">
               Itens Únicos
@@ -51,15 +51,15 @@ export default async function UniquesPage() {
             role="alert"
             className="rounded-md border border-red-900/80 bg-red-950/40 px-4 py-3 text-sm text-red-200"
           >
-            Não foi possível carregar os itens Únicos. Confira se o banco de dados (Supabase) está acessível.
+            Could not load Unique items. Check if the database (Supabase) is accessible.
           </p>
         ) : (
           <>
             <p className="text-sm text-zinc-500 font-mono">
-              {uniques.length} {uniques.length === 1 ? "item registrado" : "itens registrados"}
+              {uniques.length} {uniques.length === 1 ? "registered item" : "registered items"}
             </p>
             <UniqueGrid 
-              uniques={uniques.map(u => {
+              items={uniques.map(u => {
                 const dropData = getUniqueItemByName(u.name);
                 const stats = dropData ? translateStats(dropData.rawProps) : [];
                 
@@ -71,10 +71,13 @@ export default async function UniquesPage() {
                       text: s.text,
                       color: s.color,
                       gapBefore: i === 0,
-                    })) : [{ text: "Status base ainda não disponível.", color: "#888888", gapBefore: true }])
+                    })) : [{ text: "Base stats not yet available.", color: "#888888", gapBefore: true }])
                   ]
                 };
               })}
+              quality="unique"
+              emptyMessage="No Unique items found."
+              emptyCommand="npm run db:scrape:uniques"
             />
           </>
         )}

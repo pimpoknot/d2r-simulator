@@ -46,7 +46,7 @@ function entryLabel(entry: TreasureClassEntry): string {
     case "uniqueItem":
       return target.name;
     case "gold":
-      return target.multiplier === null ? "Ouro" : `Ouro ×${target.multiplier}`;
+      return target.multiplier === null ? "Gold" : `Gold ×${target.multiplier}`;
     case "unresolved":
       return target.token;
   }

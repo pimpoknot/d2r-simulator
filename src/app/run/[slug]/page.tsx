@@ -29,7 +29,7 @@ export default async function RunPage({ params }: RunPageProps) {
               href="/"
               className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors flex items-center gap-2"
             >
-              <span>&larr;</span> Voltar para as Áreas
+              <span>&larr;</span> Back to Areas
             </Link>
           </div>
           <div>
@@ -37,10 +37,10 @@ export default async function RunPage({ params }: RunPageProps) {
               {farm.area} · {farm.difficulty}
             </p>
             <h1 className="font-[family-name:var(--font-diablo)] text-4xl tracking-wide text-zinc-50 uppercase mt-1">
-              Farmando: {farm.name}
+              Farming: {farm.name}
             </h1>
             <p className="mt-2 text-sm leading-6 text-zinc-400">
-              {farm.note}. Matando {farm.monsters.join(", ")}.
+              {farm.note}. Killing {farm.monsters.join(", ")}.
             </p>
           </div>
         </header>
