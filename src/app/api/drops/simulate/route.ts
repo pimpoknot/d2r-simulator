@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       uniqueNames.length > 0
         ? await db.uniqueItem.findMany({
             where: { name: { in: uniqueNames } },
-            select: { name: true, imageUrl: true },
+            select: { id: true, name: true, imageUrl: true },
           })
         : [];
 
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       setNames.length > 0
         ? await db.setItem.findMany({
             where: { name: { in: setNames } },
-            select: { name: true, imageUrl: true },
+            select: { id: true, name: true, imageUrl: true },
           })
         : [];
 
@@ -257,7 +257,7 @@ export async function POST(request: Request) {
         const userId = await getDefaultUserId();
         
         const itemsToSave = dropsWithImages
-          .filter(d => d.itemType !== "gold")
+          .filter(d => ["UNIQUE", "SET", "RUNE"].includes(d.quality))
           .map(d => ({
             userId,
             itemName: d.name,
@@ -268,9 +268,36 @@ export async function POST(request: Request) {
             }
           }));
         
+
         if (itemsToSave.length > 0) {
           await db.stashItem.createMany({ data: itemsToSave });
         }
+
+        // Save both Uniques and Sets to HolyGrail
+        const grailItems = dropsWithImages.filter((d) => d.quality === "UNIQUE" || d.quality === "SET");
+        const grailItemIdsToSave = grailItems
+          .map((d) => {
+            if (d.quality === "UNIQUE") {
+              const dbItem = dbUniques.find(u => u.name === d.name);
+              return dbItem ? dbItem.id : null;
+            } else if (d.quality === "SET") {
+              const dbItem = dbSets.find(s => s.name === d.name);
+              return dbItem ? dbItem.id : null;
+            }
+            return null;
+          })
+          .filter((id) => id !== null) as string[];
+
+        if (grailItemIdsToSave.length > 0) {
+          await db.holyGrail.createMany({
+            data: grailItemIdsToSave.map(id => ({
+              userId,
+              uniqueItemId: id,
+            })),
+            skipDuplicates: true,
+          });
+        }
+
       } catch (e) {
         console.error("Failed to save to stash", e);
       }

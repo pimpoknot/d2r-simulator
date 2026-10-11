@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-
 import { FarmBoard } from "@/components/modules/farm-board";
 import { listFarmCards } from "@/services/farm.service";
+import { AppHeader } from "@/components/modules/app-header";
+import { AppFooter } from "@/components/modules/app-footer";
 
 export const metadata: Metadata = {
-  // The root layout template does not apply to this same route segment.
-  title: { absolute: "Farms · D2R Simulator" },
+  title: { absolute: "Farms · Sanctuary Lootsmith" },
   description: "Hell farm locations and their boss Treasure Classes.",
 };
 
@@ -14,44 +13,28 @@ export default function Home() {
   const farms = listFarmCards();
 
   return (
-    <div className="min-h-full w-full min-w-0 flex-1 overflow-x-hidden bg-[#0c0c0e] text-zinc-100">
-      <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
-        <header className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-medium tracking-[0.18em] text-sky-400 uppercase">Diablo II</p>
-            <div className="flex gap-4">
-              <Link
-                href="/stash"
-                className="text-sm font-medium text-amber-500 underline-offset-4 hover:text-amber-400 hover:underline"
-              >
-                Stash
-              </Link>
-              <Link
-                href="/uniques"
-                className="text-sm text-zinc-400 underline-offset-4 hover:text-zinc-100 hover:underline"
-              >
-                Unique Items
-              </Link>
-              <Link
-                href="/runes"
-                className="text-sm text-zinc-400 underline-offset-4 hover:text-zinc-100 hover:underline"
-              >
-                Rune List
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h1 className="font-[family-name:var(--font-diablo)] text-4xl tracking-wide text-zinc-50 uppercase sm:text-5xl">
+    <div className="min-h-screen flex flex-col">
+      <AppHeader />
+
+      <main className="flex-1 w-full max-w-[1540px] mx-auto p-4 md:p-6 mb-28">
+        <header className="mb-6">
+          <div className="flex flex-col gap-2 mb-4">
+            <p className="text-xs font-[family-name:var(--font-mono-sharp)] tracking-[0.18em] text-[#c7b377] uppercase">
+              Diablo II: Resurrected
+            </p>
+            <h1 className="font-[family-name:var(--font-headline)] text-4xl md:text-5xl tracking-wide text-[#c7b377] uppercase font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               Where to Farm
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-              Seis farms de Hell. Cada card mostra a Treasure Class do chefe, quantos picks ela
-              rola, o NoDrop e o peso de cada entrada.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#b2b8c0] font-[family-name:var(--font-body)]">
+              Six Hell farms. Each card shows the boss Treasure Class, how many picks it rolls, the NoDrop, and the weight of each entry.
             </p>
           </div>
         </header>
+
         <FarmBoard farms={farms} />
       </main>
+
+      <AppFooter />
     </div>
   );
 }

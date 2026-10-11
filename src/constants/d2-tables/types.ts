@@ -8,6 +8,9 @@ export interface BaseItem {
   level: number;
   rarity: number;
   spawnable: boolean;
+  normcode?: string | null;
+  ubercode?: string | null;
+  ultracode?: string | null;
   minac?: number;
   maxac?: number;
   mindam?: number;

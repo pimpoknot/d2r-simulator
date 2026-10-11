@@ -1,16 +1,35 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { EB_Garamond, Cinzel, Domine, Share_Tech_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const ebGaramond = EB_Garamond({
+  weight: ["500", "600", "700", "800"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
+  variable: "--font-headline",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const cinzel = Cinzel({
+  weight: ["600", "700", "900"],
   subsets: ["latin"],
+  variable: "--font-headline-alt",
+  display: "swap",
+});
+
+const domine = Domine({
+  weight: ["400", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const shareTechMono = Share_Tech_Mono({
+  weight: ["400"],
+  subsets: ["latin"],
+  variable: "--font-mono-sharp",
+  display: "swap",
 });
 
 const diablo = localFont({
@@ -23,19 +42,21 @@ const diablo = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "D2R Simulator",
-    template: "%s · D2R Simulator",
+    default: "Sanctuary Lootsmith · D2R Simulator",
+    template: "%s · Sanctuary Lootsmith",
   },
-  description: "Simulador idle de drop do Diablo II: Resurrected.",
+  description: "Idle farming loot simulator for Diablo II: Resurrected.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} ${diablo.variable} h-full antialiased`}
+      className={`dark ${ebGaramond.variable} ${cinzel.variable} ${domine.variable} ${shareTechMono.variable} ${diablo.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col gothic-chassis select-none overflow-x-hidden">
+        {children}
+      </body>
     </html>
   );
 }

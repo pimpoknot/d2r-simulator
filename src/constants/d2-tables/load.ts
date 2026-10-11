@@ -42,15 +42,21 @@ function asTable(fileName: string, value: unknown): Record<string, unknown> {
 }
 
 const RAW_TABLES = {
-  "treasureclassex.json": () => asTable("treasureclassex.json", requireJson("./treasureclassex.json")),
-  "itemtypes.json": () => asTable("itemtypes.json", requireJson("./itemtypes.json")),
+  "treasureclassex.json": () =>
+    asTable("treasureclassex.json", requireJson("./treasureclassex.json")),
+  "itemtypes.json": () =>
+    asTable("itemtypes.json", requireJson("./itemtypes.json")),
   "armor.json": () => asTable("armor.json", requireJson("./armor.json")),
   "weapons.json": () => asTable("weapons.json", requireJson("./weapons.json")),
   "misc.json": () => asTable("misc.json", requireJson("./misc.json")),
-  "uniqueitems.json": () => asTable("uniqueitems.json", requireJson("./uniqueitems.json")),
-  "setitems.json": () => asTable("setitems.json", requireJson("./setitems.json")),
-  "itemratio.json": () => asTable("itemratio.json", requireJson("./itemratio.json")),
-  "superuniques.json": () => asTable("superuniques.json", requireJson("./superuniques.json")),
+  "uniqueitems.json": () =>
+    asTable("uniqueitems.json", requireJson("./uniqueitems.json")),
+  "setitems.json": () =>
+    asTable("setitems.json", requireJson("./setitems.json")),
+  "itemratio.json": () =>
+    asTable("itemratio.json", requireJson("./itemratio.json")),
+  "superuniques.json": () =>
+    asTable("superuniques.json", requireJson("./superuniques.json")),
 } as const;
 
 function loadTable(fileName: keyof typeof RAW_TABLES): Record<string, unknown> {
@@ -71,7 +77,11 @@ function readNumber(row: Record<string, unknown>, key: string): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-function requireNumber(row: Record<string, unknown>, key: string, label: string): number {
+function requireNumber(
+  row: Record<string, unknown>,
+  key: string,
+  label: string,
+): number {
   const value = readNumber(row, key);
   if (value === null) {
     throw new Error(`d2 table row ${label} is missing numeric ${key}`);
@@ -79,7 +89,9 @@ function requireNumber(row: Record<string, unknown>, key: string, label: string)
   return value;
 }
 
-function readRows(fileName: keyof typeof RAW_TABLES): Record<string, unknown>[] {
+function readRows(
+  fileName: keyof typeof RAW_TABLES,
+): Record<string, unknown>[] {
   return Object.values(loadTable(fileName)).filter(isRecord);
 }
 
@@ -100,11 +112,14 @@ function loadBaseItems(
       level: readNumber(row, "level") ?? 0,
       rarity: readNumber(row, "rarity") ?? 0,
       spawnable: readNumber(row, "spawnable") !== 0,
+      normcode: readString(row, "normcode"),
+      ubercode: readString(row, "ubercode"),
+      ultracode: readString(row, "ultracode"),
       invfile: readString(row, "invfile") ?? undefined,
       uniqueinvfile: readString(row, "uniqueinvfile") ?? undefined,
       setinvfile: readString(row, "setinvfile") ?? undefined,
     };
-    
+
     if (table === "armor") {
       item.minac = readNumber(row, "minac") ?? undefined;
       item.maxac = readNumber(row, "maxac") ?? undefined;
@@ -137,7 +152,10 @@ function loadItemTypes(): Map<string, ItemTypeRecord> {
   return itemTypes;
 }
 
-function loadUniqueItems(): { byBase: Map<string, UniqueItemDrop[]>; byName: Map<string, UniqueItemDrop> } {
+function loadUniqueItems(): {
+  byBase: Map<string, UniqueItemDrop[]>;
+  byName: Map<string, UniqueItemDrop>;
+} {
   const byBase = new Map<string, UniqueItemDrop[]>();
   const byName = new Map<string, UniqueItemDrop>();
   for (const row of readRows("uniqueitems.json")) {
@@ -257,7 +275,9 @@ function loadSuperUniques(): Map<string, SuperUniqueDrop> {
   return superUniques;
 }
 
-function classifyGold(token: string): Extract<DropToken, { kind: "gold" }> | null {
+function classifyGold(
+  token: string,
+): Extract<DropToken, { kind: "gold" }> | null {
   const stripped = token.replaceAll('"', "");
   if (stripped === "gld") return { kind: "gold", multiplier: null };
   const match = /^gld,mul=(\d+)$/.exec(stripped);
@@ -265,7 +285,10 @@ function classifyGold(token: string): Extract<DropToken, { kind: "gold" }> | nul
   return { kind: "gold", multiplier: Number(match[1]) };
 }
 
-function classifyItemType(token: string, itemTypes: Map<string, ItemTypeRecord>): DropToken | null {
+function classifyItemType(
+  token: string,
+  itemTypes: Map<string, ItemTypeRecord>,
+): DropToken | null {
   const match = /^([A-Za-z]+)(\d+)$/.exec(token);
   if (!match) return null;
   const code = match[1];
@@ -284,12 +307,19 @@ function createClassifier(loaded: Omit<Tables, "treasureClasses" | "counts">) {
     const itemType = classifyItemType(token, loaded.itemTypes);
     if (itemType) return itemType;
     const unique = loaded.uniquesByName.get(token);
-    if (unique) return { kind: "uniqueItem", name: unique.name, baseCode: unique.baseCode };
+    if (unique)
+      return {
+        kind: "uniqueItem",
+        name: unique.name,
+        baseCode: unique.baseCode,
+      };
     return { kind: "unresolved", token };
   };
 }
 
-function loadTreasureClasses(classify: (token: string) => DropToken): Map<string, TreasureClassView> {
+function loadTreasureClasses(
+  classify: (token: string) => DropToken,
+): Map<string, TreasureClassView> {
   const rows = loadTable("treasureclassex.json");
   const names = new Set(Object.keys(rows));
   const treasureClasses = new Map<string, TreasureClassView>();
@@ -300,7 +330,9 @@ function loadTreasureClasses(classify: (token: string) => DropToken): Map<string
     for (const slot of ITEM_SLOTS) {
       const token = readString(value, `Item${slot}`);
       if (!token) continue;
-      const target = names.has(token) ? { kind: "treasureClass" as const, name: token } : classify(token);
+      const target = names.has(token)
+        ? { kind: "treasureClass" as const, name: token }
+        : classify(token);
       entries.push({
         token,
         probability: readNumber(value, `Prob${slot}`) ?? 0,
@@ -360,7 +392,10 @@ function loadTables(): Tables {
       baseItems: baseItems.size,
       itemTypes: itemTypes.size,
       uniqueItems: uniques.byName.size,
-      setItems: [...setsByBase.values()].reduce((sum, items) => sum + items.length, 0),
+      setItems: [...setsByBase.values()].reduce(
+        (sum, items) => sum + items.length,
+        0,
+      ),
       itemRatios: itemRatios.length,
       superUniques: superUniques.size,
     },
@@ -402,7 +437,7 @@ export function getSetItemsForBase(code: string): SetItemDrop[] {
 
 export function getSetItemByName(name: string): SetItemDrop | null {
   for (const items of getTables().setsByBase.values()) {
-    const found = items.find(i => i.name === name);
+    const found = items.find((i) => i.name === name);
     if (found) return found;
   }
   return null;

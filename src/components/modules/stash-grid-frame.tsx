@@ -87,7 +87,7 @@ export function StashGridFrame({ userId }: { userId?: string }) {
                       <ItemTooltip
                         item={{
                           name: item.itemName,
-                          quality: item.itemQuality.toLowerCase() as any,
+                          quality: item.itemQuality.toLowerCase() as "normal" | "magic" | "rare" | "set" | "unique" | "rune" | "crafted",
                           lines: stats.tooltipLines || []
                         }}
                       >

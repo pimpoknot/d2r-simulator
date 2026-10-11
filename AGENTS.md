@@ -6,7 +6,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
-
 <!-- END:nextjs-agent-rules -->
 
 # D2R Simulator — agent brief
@@ -65,7 +64,19 @@ Models: `User`, `Location`, `UserRunConfig`, `StashItem`, `HolyGrail`, `Rune` (`
 - Rune table with tooltips.
 - Prisma schema & Supabase connection.
 - Firecrawl scrapers for runes and uniques.
-- Zero lint/type errors (`npm run lint` passes cleanly).
+- **Gothic "Catacomb Ash" Visual Redesign (2025-01-XX)**:
+  - Radial gradient backgrounds (`gothic-chassis`) with atmospheric depth
+  - Skeuomorphic stone panels (`stone-plate`, `stone-recessed`) with raised/inset effects
+  - Engraved headers (`panel-engraved-header`) with metal trim and corner decorations
+  - Authentic D2 button styling with beveled borders, hover/active states
+  - Custom scrollbar themed to dark atmosphere
+  - Typography: EB Garamond/Cinzel (headlines), Domine (body), Share Tech Mono (stats)
+  - D2 item quality colors: Unique (#c7b377), Set (#00ff00), Rare (#ffff00), Magic (#4848ff), Rune (#ffa800)
+  - Authentic D2 orbs (Life/Mana) with glass shine effects in footer HUD
+  - New components: `AppHeader`, `AppFooter`, `TelemetryStrip`
+  - Gothic farm cards with stone-plate styling
+  - 100% English translation (UI previously in pt-BR)
+  - Real-time drop simulation working with live feed and stash grid
 
 ## What is Missing / Next Tasks
 

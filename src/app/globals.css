@@ -1,30 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Domine:wght@400;600;700&family=EB+Garamond:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Share+Tech+Mono&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0c0e;
+  --foreground: #e2e5e8;
+  --surface: #0d0f12;
+  --surface-dim: #0b0c0e;
+  --surface-bright: #2c323a;
+  --surface-container-lowest: #07080a;
+  --surface-container-low: #111316;
+  --surface-container: #181a1d;
+  --surface-container-high: #1f2329;
+  --surface-container-highest: #282d35;
+  --primary: #c7b377;
+  --primary-container: #c7b377;
+  --on-primary: #3c2f01;
+  --on-surface: #e2e5e8;
+  --on-surface-variant: #b2b8c0;
+  --outline: #525c68;
+  --outline-variant: #353b44;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: "Domine", serif;
+  --font-mono: "Share Tech Mono", monospace;
+  --font-headline: "EB Garamond", "Cinzel", serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Domine", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: url('/cursor.svg') 2 2, auto;
 }
 
+button, a, [role="button"], input[type="button"], input[type="submit"] {
+  cursor: url('/cursor-pointer.svg') 8 4, pointer;
+}
+
+/* Gothic Chassis - Radial gradient background */
+.gothic-chassis {
+  background: radial-gradient(circle at 50% 15%, #15181d 0%, #0d0e11 50%, #060708 100%);
+}
+
+/* Stone Plate - Raised panel effect */
+.stone-plate {
+  background: linear-gradient(180deg, #171a1f 0%, #0f1115 100%);
+  border: 1px solid #383f49;
+  box-shadow: inset 1px 1px 0px rgba(110, 122, 138, 0.25), inset -1px -1px 0px rgba(0, 0, 0, 0.9), 0 5px 20px rgba(0, 0, 0, 0.85);
+}
+
+/* Stone Recessed - Inset panel effect */
+.stone-recessed {
+  background: #08090b;
+  border: 1px solid #252b34;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.95), inset -1px -1px 2px rgba(82, 92, 104, 0.15);
+}
+
+/* Panel Engraved Header */
+.panel-engraved-header {
+  background: linear-gradient(180deg, #22272f 0%, #16191f 100%);
+  border-bottom: 1px solid #3d4551;
+  border-top: 1px solid #4a5462;
+}
+
+/* D2 Button */
+.d2-button {
+  background: linear-gradient(180deg, #232830 0%, #13161a 100%);
+  border-top: 2px solid #4c5765;
+  border-left: 2px solid #4c5765;
+  border-bottom: 2px solid #0a0c0e;
+  border-right: 2px solid #0a0c0e;
+  box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.06), 0 3px 6px rgba(0, 0, 0, 0.8);
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.d2-button:hover {
+  background: linear-gradient(180deg, #2c333e 0%, #181c22 100%);
+  border-top-color: #6d7b8d;
+  border-left-color: #6d7b8d;
+}
+
+.d2-button:active {
+  background: #0f1114;
+  border-top: 2px solid #080a0c;
+  border-left: 2px solid #080a0c;
+  border-bottom: 2px solid #3d4551;
+  border-right: 2px solid #3d4551;
+  transform: translateY(1px);
+}
+
+/* Corner Bracket */
+.corner-bracket::before {
+  content: "◆";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  font-size: 8px;
+  color: #7b8898;
+  text-shadow: 0 0 5px #000;
+}
+
+.corner-bracket::after {
+  content: "◆";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 8px;
+  color: #7b8898;
+  text-shadow: 0 0 5px #000;
+}
+
+/* Corner Tick */
+.corner-tick {
+  position: relative;
+}
+
+.corner-tick::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  border-top: 1px solid #7c8a9a;
+  border-left: 1px solid #7c8a9a;
+}
+
+.corner-tick::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 4px;
+  height: 4px;
+  border-top: 1px solid #7c8a9a;
+  border-right: 1px solid #7c8a9a;
+}
+
+/* Diablo Orb Spheres */
+.orb-life {
+  background: radial-gradient(circle at 35% 25%, #ff5252 0%, #a70000 35%, #590000 70%, #1e0000 100%);
+  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.8), inset 0 10px 14px rgba(255, 255, 255, 0.4), 0 0 20px rgba(180, 0, 0, 0.45);
+}
+
+.orb-mana {
+  background: radial-gradient(circle at 35% 25%, #6e79ff 0%, #1c26b8 35%, #0b116d 70%, #030526 100%);
+  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.8), inset 0 10px 14px rgba(255, 255, 255, 0.4), 0 0 20px rgba(25, 40, 180, 0.45);
+}
+
+.orb-glass-shine {
+  background: radial-gradient(ellipse at 40% 15%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 65%);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08090c;
+  border: 1px solid #1c2128;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d343f;
+  border: 1px solid #444f5e;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e4857;
+}
+
+/* D2 Tooltip - Classic Style */
 .d2-tooltip {
   position: fixed;
   z-index: 80;
@@ -36,19 +190,20 @@ body {
   max-width: calc(100vw - 16px);
   margin: 0;
   padding: 12px 16px 14px;
-  border: 1px solid #3d2a16;
+  background-color: #040507;
+  border: 1px solid #3d4551;
+  outline: 1px solid #111317;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.98), inset 0 0 8px rgba(0, 0, 0, 0.9);
   border-radius: 0;
-  background: linear-gradient(145deg, #111 0%, #000 100%);
   color: #fff;
   pointer-events: none;
-  font-family: var(--font-diablo), "Times New Roman", Times, serif;
-  font-size: 16px;
-  font-weight: 900;
+  font-family: var(--font-diablo), "EB Garamond", "Cinzel", serif;
+  font-size: 15px;
+  font-weight: 700;
   font-synthesis: none;
-  line-height: 1.2;
-  letter-spacing: 0.045em;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
   text-align: center;
-  text-transform: uppercase;
 }
 
 .d2-tooltip p {
@@ -61,4 +216,33 @@ body {
 
 .d2-tooltip .d2-tooltip-gap {
   margin-top: 1em;
+}
+
+/* D2 Item Quality Colors */
+.item-unique {
+  color: #c7b377;
+}
+
+.item-set {
+  color: #00ff00;
+}
+
+.item-rare {
+  color: #ffff00;
+}
+
+.item-magic {
+  color: #4848ff;
+}
+
+.item-rune {
+  color: #ffa800;
+}
+
+.item-normal {
+  color: #ffffff;
+}
+
+.item-gray {
+  color: #7c7c7c;
 }

@@ -5,6 +5,8 @@ import { UniqueGrid } from "@/components/modules/unique-grid";
 import { listUniques } from "@/server/repositories/unique.repo";
 import { getUniqueItemByName } from "@/constants/d2-tables/load";
 import { translateStats } from "@/constants/d2-tables/stats-translator";
+import { db } from "@/server/db/client";
+import { getDefaultUserId } from "@/server/repositories/user.repo";
 
 export const metadata: Metadata = {
   title: "Unique Items",
@@ -13,14 +15,24 @@ export const metadata: Metadata = {
 
 export default async function UniquesPage() {
   let uniques: Awaited<ReturnType<typeof listUniques>> = [];
+  let collectedIds = new Set<string>();
   let failed = false;
 
   try {
     uniques = await listUniques();
+    const userId = await getDefaultUserId();
+    const grails = await db.holyGrail.findMany({
+      where: { userId },
+      select: { uniqueItemId: true }
+    });
+    collectedIds = new Set(grails.map(g => g.uniqueItemId));
   } catch (cause) {
     failed = true;
     console.error("Failed to list unique items", cause);
   }
+
+  const collectedCount = Array.from(collectedIds).filter(id => uniques.some(u => u.id === id)).length;
+  const percentage = uniques.length > 0 ? ((collectedCount / uniques.length) * 100).toFixed(1) : "0.0";
 
   return (
     <div className="min-h-full w-full min-w-0 flex-1 overflow-x-hidden bg-[#0c0c0e] text-zinc-100">
@@ -37,11 +49,11 @@ export default async function UniquesPage() {
               The Holy Grail
             </p>
             <h1 className="font-[family-name:var(--font-diablo)] mt-2 text-3xl tracking-wider uppercase text-zinc-50">
-              Itens Únicos
+              Unique Items
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-              Catálogo completo de itens únicos já salvos no banco de dados.
-              Clique num item para ver sua página de origem no Maxroll.
+              Complete catalog of unique items saved in the database.
+              Click on an item to view its source page on Maxroll.
             </p>
           </div>
         </header>
@@ -55,9 +67,18 @@ export default async function UniquesPage() {
           </p>
         ) : (
           <>
-            <p className="text-sm text-zinc-500 font-mono">
-              {uniques.length} {uniques.length === 1 ? "registered item" : "registered items"}
-            </p>
+            <div className="flex items-center gap-4 p-4 border border-zinc-800 bg-zinc-950/50 rounded-lg">
+              <div className="flex-1 w-full bg-zinc-900 rounded-full h-4 overflow-hidden border border-zinc-800">
+                <div 
+                  className="bg-amber-600 h-full transition-all duration-500" 
+                  style={{ width: `${percentage}%` }} 
+                />
+              </div>
+              <div className="text-sm font-mono text-zinc-300 whitespace-nowrap">
+                {collectedCount} / {uniques.length} ({percentage}%)
+              </div>
+            </div>
+            
             <UniqueGrid 
               items={uniques.map(u => {
                 const dropData = getUniqueItemByName(u.name);
@@ -65,6 +86,7 @@ export default async function UniquesPage() {
                 
                 return {
                   ...u,
+                  collected: collectedIds.has(u.id),
                   tooltipLines: [
                     { text: u.baseType || "Item", color: "#ffffff" },
                     ...(stats.length > 0 ? stats.map((s, i) => ({

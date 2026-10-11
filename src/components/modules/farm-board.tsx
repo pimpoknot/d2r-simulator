@@ -13,8 +13,8 @@ function picksLabel(picks: number) {
 function TreasureClassBlock({ treasureClass }: { treasureClass: FarmTreasureClassView }) {
   if (treasureClass.missing) {
     return (
-      <p role="alert" className="text-sm text-red-200">
-        Treasure Class {treasureClass.name} is not in the tables.
+      <p role="alert" className="text-sm text-[#ffb4ab]">
+        Treasure Class {treasureClass.name} não está nas tabelas.
       </p>
     );
   }
@@ -22,8 +22,10 @@ function TreasureClassBlock({ treasureClass }: { treasureClass: FarmTreasureClas
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h3 className="text-sm font-medium text-zinc-100">{treasureClass.name}</h3>
-        <p className="mt-1 text-xs tracking-wide text-zinc-500 uppercase">
+        <h3 className="text-sm font-[family-name:var(--font-headline)] font-semibold text-[#e2e5e8]">
+          {treasureClass.name}
+        </h3>
+        <p className="mt-1 text-xs tracking-wide text-[#b2b8c0] uppercase font-[family-name:var(--font-mono-sharp)]">
           {picksLabel(treasureClass.picks)} · NoDrop {treasureClass.noDrop}
         </p>
       </div>
@@ -33,8 +35,10 @@ function TreasureClassBlock({ treasureClass }: { treasureClass: FarmTreasureClas
             key={`${treasureClass.name}-${index}`}
             className="flex items-baseline justify-between gap-3 text-sm"
           >
-            <span className="min-w-0 text-zinc-300">{entry.label}</span>
-            <span className="shrink-0 font-mono text-xs text-amber-200/90">{entry.probability}</span>
+            <span className="min-w-0 text-[#e2e5e8] font-[family-name:var(--font-body)]">{entry.label}</span>
+            <span className="shrink-0 font-[family-name:var(--font-mono-sharp)] text-xs text-[#c7b377]">
+              {entry.probability}
+            </span>
           </li>
         ))}
       </ol>
@@ -44,28 +48,31 @@ function TreasureClassBlock({ treasureClass }: { treasureClass: FarmTreasureClas
 
 export function FarmBoard({ farms }: { farms: FarmCard[] }) {
   return (
-    <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {farms.map((farm) => {
         const killLabel = farm.killCount === 1 ? "1 kill" : `${farm.killCount} kills`;
 
         return (
           <li key={farm.slug}>
             <Link href={`/run/${farm.slug}`} className="block h-full group">
-              <article className="flex h-full flex-col gap-4 rounded-lg border border-zinc-800 bg-zinc-950/80 p-4 sm:p-5 transition-colors group-hover:border-zinc-700 group-hover:bg-zinc-900/80">
-                <header className="flex flex-col gap-1">
-                  <p className="text-xs tracking-[0.16em] text-amber-200/80 uppercase">
+              <article className="stone-plate corner-bracket p-0 flex h-full flex-col gap-4 transition-all group-hover:shadow-[0_0_20px_rgba(199,179,119,0.2)]">
+                <header className="panel-engraved-header corner-tick px-4 py-3 flex flex-col gap-1">
+                  <p className="text-xs tracking-[0.16em] text-[#c7b377]/80 uppercase font-[family-name:var(--font-mono-sharp)]">
                     {farm.area} · {farm.difficulty}
                   </p>
-                  <h2 className="font-[family-name:var(--font-diablo)] text-2xl tracking-wide text-zinc-50 uppercase group-hover:text-amber-400 transition-colors">
+                  <h2 className="font-[family-name:var(--font-headline)] text-2xl tracking-wide text-[#c7b377] uppercase group-hover:text-[#e4ce90] transition-colors font-bold">
                     {farm.name}
                   </h2>
-                  <p className="text-sm text-zinc-400">
+                  <p className="text-sm text-[#b2b8c0] font-[family-name:var(--font-body)]">
                     {farm.note}. {killLabel}: {farm.monsters.join(", ")}.
                   </p>
                 </header>
-                {farm.treasureClasses.map((treasureClass) => (
-                  <TreasureClassBlock key={treasureClass.name} treasureClass={treasureClass} />
-                ))}
+
+                <div className="px-4 pb-4 flex flex-col gap-4">
+                  {farm.treasureClasses.map((treasureClass) => (
+                    <TreasureClassBlock key={treasureClass.name} treasureClass={treasureClass} />
+                  ))}
+                </div>
               </article>
             </Link>
           </li>

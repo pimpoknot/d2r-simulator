@@ -6,7 +6,7 @@ import "server-only";
 export type StashItemCreateInput = {
   itemName: string;
   itemQuality: ItemQuality;
-  statsPayload: Record<string, unknown>;
+  statsPayload: import("@prisma/client").Prisma.InputJsonValue;
 };
 
 export async function createStashItems(userId: string, items: StashItemCreateInput[]) {

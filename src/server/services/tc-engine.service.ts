@@ -67,7 +67,10 @@ function rollQuality(
   tcOverrides?: Pick<TreasureClassView, "unique" | "set" | "rare" | "magic">,
 ): { quality: string; resolvedName: string | null } {
   // Determine which itemratio row to use (version 0, non-uber, non-class-specific for now)
-  const ratio = getItemRatio({ version: 0, uber: false, classSpecific: false });
+  const baseItem = getBaseItem(baseCode);
+  const isUber = baseItem ? (baseItem.code === baseItem.ubercode || baseItem.code === baseItem.ultracode) : false;
+  const isClassSpecific = baseItem?.type ? ["amaz", "barb", "necr", "pala", "sorc", "drui", "assa"].includes(baseItem.type) : false;
+  const ratio = getItemRatio({ version: 1, uber: isUber, classSpecific: isClassSpecific });
 
   if (ratio) {
     // --- UNIQUE ---

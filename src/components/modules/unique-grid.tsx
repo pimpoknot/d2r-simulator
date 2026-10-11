@@ -10,6 +10,7 @@ interface UniqueItemView {
   imageUrl: string | null;
   pageUrl: string;
   tooltipLines: { text: string; color?: string; gapBefore?: boolean }[];
+  collected?: boolean;
 }
 
 interface UniqueGridProps {
@@ -36,47 +37,51 @@ export function UniqueGrid({ items, quality = "unique", emptyMessage, emptyComma
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item) => (
-        <ItemTooltip
-          key={item.id}
-          item={{
-            name: item.name,
-            quality: quality,
-            lines: item.tooltipLines,
-          }}
-        >
-          <a
-            href={item.pageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 p-3 rounded-lg border border-zinc-800/50 bg-[#141416] hover:bg-zinc-900/80 transition-colors cursor-help group"
+      {items.map((item) => {
+        const isCollected = item.collected ?? true;
+        
+        return (
+          <ItemTooltip
+            key={item.id}
+            item={{
+              name: item.name,
+              quality: quality,
+              lines: item.tooltipLines,
+            }}
           >
-            <div className={`relative w-12 h-12 flex-shrink-0 bg-zinc-950/50 rounded flex items-center justify-center overflow-hidden border border-zinc-800 transition-colors ${borderColorClass}`}>
-              {item.imageUrl ? (
-                <Image
-                  src={item.imageUrl}
-                  alt={item.name}
-                  fill
-                  sizes="48px"
-                  className="object-contain p-1 drop-shadow-md"
-                />
-              ) : (
-                <span className="text-zinc-700 text-xs">?</span>
-              )}
-            </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className={`text-sm font-medium truncate transition-colors ${colorClass}`}>
-                {item.name}
-              </span>
-              {item.baseType && (
-                <span className="text-xs text-zinc-500 truncate">
-                  {item.baseType}
+            <a
+              href={item.pageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-center gap-4 p-3 rounded-lg border border-zinc-800/50 bg-[#141416] hover:bg-zinc-900/80 transition-colors cursor-help group ${!isCollected ? "opacity-40 grayscale" : ""}`}
+            >
+              <div className={`relative w-12 h-12 flex-shrink-0 bg-zinc-950/50 rounded flex items-center justify-center overflow-hidden border border-zinc-800 transition-colors ${borderColorClass}`}>
+                {item.imageUrl ? (
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.name}
+                    fill
+                    sizes="48px"
+                    className="object-contain p-1 drop-shadow-md"
+                  />
+                ) : (
+                  <span className="text-zinc-700 text-xs">?</span>
+                )}
+              </div>
+              <div className="flex flex-col overflow-hidden">
+                <span className={`text-sm font-medium truncate transition-colors ${colorClass}`}>
+                  {item.name}
                 </span>
-              )}
-            </div>
-          </a>
-        </ItemTooltip>
-      ))}
+                {item.baseType && (
+                  <span className="text-xs text-zinc-500 truncate">
+                    {item.baseType}
+                  </span>
+                )}
+              </div>
+            </a>
+          </ItemTooltip>
+        );
+      })}
     </div>
   );
 }
